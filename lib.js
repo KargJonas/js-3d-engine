@@ -4,8 +4,6 @@
  *
  * Warped image when canvas "width : height !== 1 : 1"
  * (not really a bug)
- *
- * G
  */
 
 const FOCAL_LENGTH = .5;   // FOV / ZOOM
