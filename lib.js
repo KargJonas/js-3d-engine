@@ -8,7 +8,7 @@
  * G
  */
 
-const FOCAL_LENGTH = .75;   // FOV / ZOOM
+const FOCAL_LENGTH = .5;   // FOV / ZOOM
 
 let WIDTH = 0;
 let HEIGHT = 0;
@@ -168,4 +168,14 @@ function rotateMesh(mesh, pivot, rot) {
 
 function clear() {
   c.clearRect(0, 0, WIDTH, HEIGHT);
+}
+
+function extractMesh(arr) {
+  const res = [];
+
+  while (arr.length) {
+    res.push(arr.splice(0, 3));
+  }
+
+  return res;
 }
