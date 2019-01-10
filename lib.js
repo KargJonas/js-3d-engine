@@ -1,9 +1,27 @@
-const FOCAL_LENGTH = 1;   // FOV
+// (c) JONAS KARG 2019
+
+/** TODO:
+ *
+ * Warped image when canvas "width : height !== 1 : 1"
+ * (not really a bug)
+ *
+ * G
+ */
+
+const FOCAL_LENGTH = .75;   // FOV / ZOOM
 
 let WIDTH = 0;
 let HEIGHT = 0;
 let HALF_WIDTH = 0;
 let HALF_HEIGHT = 0;
+
+const DEFAULT_DRAW_MESH_OPTIONS = {
+  drawPoints: false,
+  drawLines: true,
+  lineWidth: 1,
+  pointSize: 10,
+  closed: false,
+};
 
 const cnv = document.querySelector("canvas");
 const c = cnv.getContext("2d");
@@ -20,11 +38,6 @@ function maxCnv() {
 
 maxCnv();
 window.addEventListener("resize", maxCnv);
-
-const myVertices = [
-  [.5, .5, 1],
-  [-.5, -.5, 1]
-];
 
 // DistanceScaleFactor = focalLength / distanceToLense
 function getScaleFactor(z) {
@@ -52,20 +65,107 @@ function getPointAbsolute(point) {
   return [absoluteX, absoluteY];
 }
 
-function drawMesh(vertices) {
+function drawMesh(vertices, _options) {
+  const options = Object.assign(DEFAULT_DRAW_MESH_OPTIONS, _options);
   const projected = projectVertices(vertices);
   let absolute = projected.map(getPointAbsolute);
+  // const start = absolute.shift();
 
-  const start = absolute.shift();
-  c.moveTo(start[0], start[1]);
+  c.beginPath();
+  c.moveTo(absolute[0][0], absolute[0][1]);
 
-  absolute.map(point => {
-    c.lineTo(point[0], point[1]);
-  });
+  if (options.drawLines) {
+    c.lineWidth = options.lineWidth;
 
-  // c.lineTo(start[0], start[1]); // Closed shape
+    for (let i = 1; i < absolute.length; i++) {
+      c.lineTo(absolute[i][0], absolute[i][1]);
+    }
+  }
+
+  if (options.drawPoints) {
+    const POINT_SIZE = options.pointSize;
+    const HALF_POINT_SIZE = POINT_SIZE / 2;
+
+    absolute.map(point => {
+      c.fillRect(
+        point[0] - HALF_POINT_SIZE,
+        point[1] - HALF_POINT_SIZE,
+        POINT_SIZE,
+        POINT_SIZE
+      );
+    });
+  }
+
+  if (options.closed) {
+    c.lineTo(absolute[0][0], absolute[0][1]);
+  }
 
   c.stroke();
 }
 
-drawMesh(myVertices);
+function translateMesh(vertices, offset) {
+  const offsetX = offset[0];
+  const offsetY = offset[1];
+  const offsetZ = offset[2];
+
+  return vertices.map(vertex => [
+    vertex[0] + offsetX,
+    vertex[1] + offsetY,
+    vertex[2] + offsetZ
+  ]);
+}
+
+function rotate3D(point, pivot, rot) {
+  const x = point[0] - pivot[0];
+  const y = point[1] - pivot[1];
+  const z = point[2] - pivot[2];
+
+  const rotX = rot[0];
+  const rotY = rot[1];
+  const rotZ = rot[2];
+
+  let newX = x;
+  let newY = y;
+  let newZ = z;
+
+  if (rotX !== 0) {
+    const s = Math.sin(rotX);
+    const c = Math.cos(rotX);
+    const tempY = newY;
+
+    newY = newY * c - newZ * s;
+    newZ = newZ * c + tempY * s;
+  }
+
+  if (rotY !== 0) {
+    const s = Math.sin(rotY);
+    const c = Math.cos(rotY);
+    const tempX = newX;
+
+    newX = newX * c - newZ * s;
+    newZ = newZ * c + tempX * s;
+  }
+
+  if (rotZ !== 0) {
+    const s = Math.sin(rotZ);
+    const c = Math.cos(rotZ);
+    const tempX = newX;
+
+    newX = newX * c - newY * s;
+    newY = newY * c + tempX * s;
+  }
+
+  return [
+    newX + pivot[0],
+    newY + pivot[1],
+    newZ + pivot[2]
+  ];
+}
+
+function rotateMesh(mesh, pivot, rot) {
+  return mesh.map(vertex => rotate3D(vertex, pivot, rot));
+}
+
+function clear() {
+  c.clearRect(0, 0, WIDTH, HEIGHT);
+}
