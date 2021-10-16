@@ -23,7 +23,7 @@ const triangleStrip = [
   [+0.5, -0.5, +1.0],
 ];
 
-const box = extractMesh([
+const box = translateMesh(extractMesh([
   //[x,    y,    z]
   // Front face
   -1.0, -1.0, 1.0,
@@ -60,12 +60,12 @@ const box = extractMesh([
   -1.0, -1.0, 1.0,
   -1.0, 1.0, 1.0,
   -1.0, 1.0, -1.0,
-]);
+]), [0, 0, 4]);
 
 const tripleBox = [
-  ...translateMesh(box, [-2, 0, 4]),
-  ...translateMesh(box, [0, 0, 4]),
-  ...translateMesh(box, [2, 0, 4])
+  ...translateMesh(box, [-2, 0, 0]),
+  ...translateMesh(box, [0, 0, 0]),
+  ...translateMesh(box, [2, 0, 0])
 ];
 
 const tetrahedra = extractMesh([
@@ -80,11 +80,11 @@ const tetrahedra = extractMesh([
 let frameCount = 0;
 let shape = 0
 const shapes = [
-  // triangle,
-  // quad,
-  // triangleStrip,
-  // tetrahedra,
-  // box,
+  triangle,
+  quad,
+  triangleStrip,
+  tetrahedra,
+  box,
   tripleBox
 ];
 

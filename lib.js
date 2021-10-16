@@ -113,7 +113,8 @@ function drawMesh(vertices, _options) {
     });
   }
 
-  if (options.closed && absolute[0]) {
+  if (options.closed && absolute[0] !== null) {
+    console.log('test')
     c.lineTo(absolute[0][0], absolute[0][1]);
   }
 
