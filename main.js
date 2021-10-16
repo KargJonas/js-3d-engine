@@ -80,11 +80,11 @@ const tetrahedra = extractMesh([
 let frameCount = 0;
 let shape = 0
 const shapes = [
-  triangle,
-  quad,
-  triangleStrip,
-  tetrahedra,
-  box,
+  // triangle,
+  // quad,
+  // triangleStrip,
+  // tetrahedra,
+  // box,
   tripleBox
 ];
 
