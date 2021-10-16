@@ -6,7 +6,8 @@
  * (not really a bug)
  */
 
-const FOCAL_LENGTH = .5;   // FOV / ZOOM
+const FOCAL_LENGTH = 1;   // FOV / ZOOM
+const CLIPPING_BOUNDS = 1.4;
 
 let WIDTH = 0;
 let HEIGHT = 0;
@@ -69,8 +70,10 @@ function drawMesh(vertices, _options) {
   const options = Object.assign(DEFAULT_DRAW_MESH_OPTIONS, _options);
   const projected = projectVertices(vertices)
     .map(vertex => {
-      if (vertex[0] < -1 || vertex[0] > 1
-        || vertex[1] < -1 || vertex[1] > 1) return null;
+      if (vertex[0] < -CLIPPING_BOUNDS
+        || vertex[0] > CLIPPING_BOUNDS
+        || vertex[1] < -CLIPPING_BOUNDS
+        || vertex[1] > CLIPPING_BOUNDS) return null;
 
       return vertex;
     });
