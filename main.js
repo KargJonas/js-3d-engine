@@ -62,6 +62,12 @@ const box = extractMesh([
   -1.0, 1.0, -1.0,
 ]);
 
+const tripleBox = [
+  ...translateMesh(box, [-2, 0, 4]),
+  ...translateMesh(box, [0, 0, 4]),
+  ...translateMesh(box, [2, 0, 4])
+];
+
 const tetrahedra = extractMesh([
   0, 0, -1,
   -1, 0, 0,
@@ -77,11 +83,13 @@ const shapes = [
   triangle,
   quad,
   triangleStrip,
+  tetrahedra,
   box,
-  tetrahedra
+  tripleBox
 ];
 
 let vertices = translateMesh(shapes[shape], [0, 0, 2]);
+
 
 function drawFrame() {
   window.requestAnimationFrame(drawFrame);
@@ -100,7 +108,7 @@ function drawFrame() {
       [0, 0, 2], // pivot (the point to rotate around)
       [frameCount / 100, frameCount / 100, frameCount / 100] // the rotation itself [x, y, z]
     ),
-    { closed: true, drawPoints: true }
+    { closed: true, drawPoints: false }
   );
 }
 
