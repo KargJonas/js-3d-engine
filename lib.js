@@ -57,8 +57,6 @@ function projectVertices(vertices) {
 }
 
 function getPointAbsolute(point) {
-  if (!point) return point;
-
   // absolute = center + center * scale
   const absoluteX = HALF_WIDTH + HALF_WIDTH * -point[0]; // - to flip coordinate system
   const absoluteY = HALF_HEIGHT + HALF_HEIGHT * -point[1];
@@ -76,25 +74,19 @@ function drawMesh(vertices, _options) {
         || vertex[1] > CLIPPING_BOUNDS) return null;
 
       return vertex;
-    });
+    })
+    .filter(point => point !== null);
+
 
   let absolute = projected.map(getPointAbsolute);
-  // const start = absolute.shift();
 
   c.beginPath();
+  c.moveTo(absolute[0][0], absolute[0][1]);
 
   if (options.drawLines) {
     c.lineWidth = options.lineWidth;
 
     for (let i = 1; i < absolute.length; i++) {
-      if (!absolute[i]) {
-        if (absolute[i + 1]) {
-          c.moveTo(absolute[i + 1][0], absolute[i + 1][1]);
-        }
-
-        continue;
-      }
-
       c.lineTo(absolute[i][0], absolute[i][1]);
     }
   }
@@ -113,8 +105,7 @@ function drawMesh(vertices, _options) {
     });
   }
 
-  if (options.closed && absolute[0] !== null) {
-    console.log('test')
+  if (options.closed) {
     c.lineTo(absolute[0][0], absolute[0][1]);
   }
 
